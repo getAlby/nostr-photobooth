@@ -1,10 +1,9 @@
 import Webcam from "react-webcam";
 import { useCallback, useRef, useState } from "react"; // import useCallback
 import axios from 'axios'
-import { relayInit } from 'nostr-tools'
-import SearchBox from './SearchBox';
+import { nip19, relayInit } from 'nostr-tools'
 
-const CustomWebcam = () => {
+const CustomWebcam = (persons) => {
   const webcamRef = useRef(null);
   const [imgSrc, setImgSrc] = useState(null);
   const relay = relayInit('wss://relay.damus.io')
@@ -38,10 +37,6 @@ const CustomWebcam = () => {
     // put file into form data
     const data = new FormData()
     data.append('fileToUpload', file, file.name)
-    let name = SearchBox.name;
-    let lud16 = SearchBox.lud16;
-    console.log(lud16);
-
     // now upload to nostr.build
     const config = {
       headers: { 
@@ -49,17 +44,25 @@ const CustomWebcam = () => {
         'Accept': 'application/json',
      }
     }
+    let tags = []
+    let content = "Hi from us: "
+    for (let i = 0; i < persons.persons.length; i++) {
+      let person = persons.persons[i]
+      let npub = nip19.npubEncode(person.pubkey)
+      tags.push(["p", person.pubkey])
+      tags.push(["zap", person.lud16, "lud16"])
+      content = content + '@' + npub + " "
+    }
+    console.log(tags)
+    console.log(content)
     axios.post('https://nostr.build/upload.php', data, config).then(async response => {
       const data = response.data.toString();
       const uploadedUrl = data.match('https://nostr.build/i/[^<]*')[0];
       let event = {
         kind: 1,
         created_at: Math.floor(Date.now() / 1000),
-        tags: [
-          ["p", "8c3b267e9db6b0115498cc3efcd187d1474864940ae8ff977826b9d83d205877"],
-          [ "zap", "kiwiidb@getalby.com", "lud16" ]
-        ],
-        content: "@npub13sajvl5ak6cpz4ycesl0e5v869r5sey5pt50l9mcy6uas0fqtpmscth4np " + uploadedUrl,
+        tags: tags,
+        content: content + uploadedUrl,
       };
       let signed = await window.nostr.signEvent(event);
       await relay.connect()
