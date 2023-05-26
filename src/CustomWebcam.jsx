@@ -21,6 +21,8 @@ const dataURLtoFile = (dataurl, filename) => {
   return new File([u8arr], filename, { type: mime });
 };
 
+import Camera from "./assets/camera.svg"
+
 const CustomWebcam = (persons) => {
   const webcamRef = useRef(null);
   const [imgSrc, setImgSrc] = useState(null);
@@ -63,16 +65,18 @@ const CustomWebcam = (persons) => {
   }, [webcamRef, publish, persons.persons]);
 
   return (
-    <div className="container">
+    <>
       {imgSrc ? (
-        <img src={imgSrc} alt="webcam" />
+        <img src={imgSrc} className="w-full" style={{border: "24px solid #FFDE6E", borderRadius: "56px"}} alt="webcam" />
       ) : (
-        <Webcam height={600} width={600} ref={webcamRef} />
+        <Webcam className="w-full" style={{border: "24px solid #FFDE6E", borderRadius: "56px"}} ref={webcamRef} />
       )}
-      <div className="btn-container">
-        <button onClick={capture}>Capture photo</button>
+      <div className="flex justify-center">
+        <button onClick={capture} className="bg-primary-gradient hover:bg-primary-gradient-hover my-12 px-48 py-3.5 rounded-xl">
+          <img src={Camera} className="mx-auto h-9 w-9"/>
+        </button>
       </div>
-    </div>
+    </>
   );
 };
 export default CustomWebcam;
