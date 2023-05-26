@@ -1,0 +1,67 @@
+const defaultTheme = require("tailwindcss/defaultTheme");
+const colors = require("tailwindcss/colors");
+
+function lighten(color, percent) {
+  var num = parseInt(color.replace("#", ""), 16),
+    amt = Math.round(2.55 * percent),
+    R = (num >> 16) + amt,
+    B = ((num >> 8) & 0x00ff) + amt,
+    G = (num & 0x0000ff) + amt;
+  return (
+    "#" +
+    (
+      0x1000000 +
+      (R < 255 ? (R < 1 ? 0 : R) : 255) * 0x10000 +
+      (B < 255 ? (B < 1 ? 0 : B) : 255) * 0x100 +
+      (G < 255 ? (G < 1 ? 0 : G) : 255)
+    )
+      .toString(16)
+      .slice(1)
+  );
+}
+
+const surfaceColor = "#121212";
+
+export default {
+  content: ["./src/*.{js,jsx}", "./index.html"],
+  plugins: [],
+  theme: {
+    extend: {
+      animation: {
+        "spin-fast": "spin 0.7s linear infinite",
+      },
+      fontFamily: {
+        sans: ["Inter var", ...defaultTheme.fontFamily.sans],
+        serif: ["Catamaran", ...defaultTheme.fontFamily.sans],
+      },
+      fontSize: {
+        xxxs: ".5rem",
+        xxs: ".625rem",
+      },
+      spacing: {
+        18: "4.5rem",
+      },
+      colors: {
+        primary: "#FFDE6E",
+        "green-bitcoin": "#27ae60",
+
+        // Material Design Surface Colors
+        "surface-00dp": surfaceColor,
+        "surface-01dp": lighten(surfaceColor, 5),
+        "surface-02dp": lighten(surfaceColor, 7),
+        "surface-03dp": lighten(surfaceColor, 8),
+        "surface-04dp": lighten(surfaceColor, 9),
+        "surface-06dp": lighten(surfaceColor, 11),
+        "surface-08dp": lighten(surfaceColor, 12),
+        "surface-12dp": lighten(surfaceColor, 14),
+        "surface-16dp": lighten(surfaceColor, 15),
+        "surface-24dp": lighten(surfaceColor, 16),
+      },
+    },
+    backgroundImage: (theme) => ({
+      "primary-gradient": `linear-gradient(180deg, #FFDE6E 63%, #F8C455 95%)`,
+      "primary-gradient-hover": `linear-gradient(180deg, #F2D369 63%, #ECBA51 95%)`,
+    }),
+  },
+}
+
