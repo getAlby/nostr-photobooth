@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import axios from 'axios'
+import axios from 'axios';
 
 const SearchBox = ({ addPerson }) => {
   const [query, setQuery] = useState('');
@@ -10,11 +10,11 @@ const SearchBox = ({ addPerson }) => {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-	let resp = await axios.get(
-		`https://api.nostr.band/nostr?method=search&count=5&q=${query}`
-	)
-	let person = resp.data.people[0]
-  addPerson(person)
+    let resp = await axios.get(
+      `https://api.nostr.band/nostr?method=search&count=5&q=${query}`
+    );
+    let person = resp.data.people[0];
+    addPerson(person);
   };
 
   return (
@@ -26,7 +26,6 @@ const SearchBox = ({ addPerson }) => {
         placeholder="Search..."
       />
       <button type="submit">Search</button>
-
     </form>
   );
 };
