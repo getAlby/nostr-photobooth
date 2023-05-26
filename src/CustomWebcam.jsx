@@ -3,6 +3,8 @@ import { useCallback, useRef, useState } from "react"; // import useCallback
 import axios from 'axios'
 import { nip19, relayInit } from 'nostr-tools'
 
+import Camera from "./assets/camera.svg"
+
 const CustomWebcam = (persons) => {
   const webcamRef = useRef(null);
   const [imgSrc, setImgSrc] = useState(null);
@@ -72,16 +74,18 @@ const CustomWebcam = (persons) => {
   }, [webcamRef, relay]);
 
   return (
-	<div className="container">
-	{imgSrc ? (
-	  <img src={imgSrc} alt="webcam" />
-	) : (
-	  <Webcam height={600} width={600} ref={webcamRef} />
-	)}
-	<div className="btn-container">
-	  <button onClick={capture}>Capture photo</button>
-	</div>
-  </div>
+    <>
+      {imgSrc ? (
+        <img src={imgSrc} className="w-full" style={{border: "24px solid #FFDE6E", borderRadius: "56px"}} alt="webcam" />
+      ) : (
+        <Webcam className="w-full" style={{border: "24px solid #FFDE6E", borderRadius: "56px"}} ref={webcamRef} />
+      )}
+      <div className="flex justify-center">
+        <button onClick={capture} className="bg-primary-gradient hover:bg-primary-gradient-hover my-12 px-48 py-3.5 rounded-xl">
+          <img src={Camera} className="mx-auto h-9 w-9"/>
+        </button>
+      </div>
+    </>
   );
 };
 export default CustomWebcam;
