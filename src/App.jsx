@@ -7,8 +7,8 @@ import CrossIcon from "./assets/cross.jsx"
 
 function App() {
   const [persons, setPersons] = useState([]);
-  function addPerson(person){
-    setPersons([...persons, person])
+  function addPerson(person) {
+    setPersons([...persons, person]);
   }
   return (
     <>
@@ -57,7 +57,7 @@ function App() {
         </div>
       </div>
     </>
-  )
+  );
 }
 
-export default App
+export default App;
