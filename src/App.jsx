@@ -34,9 +34,9 @@ function App() {
             <ul className="mt-4">
               {persons.map((person, index) => 
                 <div key={`person-${index}`} className="flex justify-between items-center text-white">
-                  <div className="flex items-center">
+                  <div className="flex items-center py-2">
                     <img className="bg-white rounded-full h-8 w-8" src={person.picture}></img>
-                    <div className="ml-3 text-sm py-2">     
+                    <div className="ml-3 text-sm">     
                       <h3 className="font-bold">{person.name}</h3>
                       <p className="font-medium">{person.lud16}</p>
                     </div>
