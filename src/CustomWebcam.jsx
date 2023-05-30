@@ -3,6 +3,7 @@ import { usePublish } from 'nostr-hooks';
 import { nip19 } from 'nostr-tools';
 import { useCallback, useRef, useState } from 'react';
 import Webcam from 'react-webcam';
+import { createSplitAddress } from "./utils/createSplitAddress";
 
 const RELAYS = ['wss://relay.damus.io'];
 
@@ -29,7 +30,12 @@ const CustomWebcam = (persons) => {
 
   const publish = usePublish(RELAYS);
 
-  const capture = useCallback(() => {
+  const capture = useCallback(async () => {
+    if (!persons.persons.length) {
+      alert("Please tag some users");
+      return;
+    }
+
     const imageSrc = webcamRef.current.getScreenshot();
     setImgSrc(imageSrc);
     // generate file from base64 string
@@ -46,13 +52,23 @@ const CustomWebcam = (persons) => {
     };
     let tags = [];
     let content = 'Hi from us: ';
+
+    const splitAddresses = [];
     for (let i = 0; i < persons.persons.length; i++) {
       let person = persons.persons[i];
       let npub = nip19.npubEncode(person.pubkey);
       tags.push(['p', person.pubkey]);
-      tags.push(['zap', person.lud16, 'lud16']);
+      if (person.lud16) {
+        splitAddresses.push(person.lud16);
+      }
+      else {
+        console.warn(person.pubkey + " does not have a lightning address")
+      }
       content = content + '@' + npub + ' ';
     }
+    const splitAddress = await createSplitAddress(splitAddresses);
+    tags.push(['zap', splitAddress, 'lud16']);
+
     console.log(tags);
     console.log(content);
     axios
