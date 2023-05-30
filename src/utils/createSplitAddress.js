@@ -25,7 +25,7 @@ export async function createSplitAddress(splitAddresses) {
   const response = await axios
       .post('https://splitaddress.fly.dev/splits', splits, {
         headers: {
-          'Content-Type': 'multipart/form-data',
+          'Content-Type': 'application/json',
         },
       });
   if (response.status !== 200) {
