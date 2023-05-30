@@ -4,6 +4,7 @@ const DONATION_PERCENT = 1;
 const DONATION_ADDRESSES = [
   'nostrbuild@getalby.com',
   'sepehr@getalby.com', // nostr-hooks
+  "wallet@nostr.band",
 ];
 
 export async function createSplitAddress(splitAddresses) {
