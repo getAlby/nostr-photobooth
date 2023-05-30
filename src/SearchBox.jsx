@@ -1,40 +1,59 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import { debounce } from 'lodash';
 import axios from 'axios'
 
 import Search from './assets/search.jsx'
 
 const SearchBox = ({ addPerson }) => {
-  const [query, setQuery] = useState('');
+  const [modal, setModal] = useState(false);
+  const [people, setPeople] = useState([]);
   const [loading, setLoading] = useState(false);
   const [isFocused, setIsFocused] = useState(false);
+  const searchRef = useRef(null);
 
-  const handleFocus = () => {
+  const handleFocus = (event) => {
+    search(event.target.value);
     setIsFocused(true);
   };
 
   const handleBlur = () => {
     setIsFocused(false);
+    setLoading(false);
   };
 
-  const handleInputChange = (event) => {
-    setQuery(event.target.value);
-  };
-
-  const handleSubmit = async (event) => {
-    event.preventDefault();
+  const search = async (query) => {
+    if (!query) return
+    setModal(false);
     setLoading(true);
     let resp = await axios.get(
       `https://api.nostr.band/nostr?method=search&count=5&q=${query}`
     )
-    let person = resp.data.people[0]
+    let res = resp.data.people.slice(0, 3);
     setLoading(false);
-    setQuery('')
-    addPerson(person)
+    setModal(true);
+    setPeople(res);
+    setLoading(false);
   };
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (searchRef.current && !searchRef.current.contains(event.target)) {
+        setModal(false);
+      }
+    };
+    document.addEventListener('click', handleClickOutside);
+    return () => {
+      document.removeEventListener('click', handleClickOutside);
+    };
+  }, []);
+
+  const handleSearch = debounce(async (event) => {
+    search(event.target.value);
+  }, 300);
 
   return (
     <>
-      <form onSubmit={handleSubmit}>   
+      <form className="relative">   
         <div className="relative">
           <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
             {loading ?     
@@ -46,14 +65,29 @@ const SearchBox = ({ addPerson }) => {
           </div>
           <input
             type="text"
-            value={query}
-            onChange={handleInputChange}
+            onChange={handleSearch}
             onFocus={handleFocus}
             onBlur={handleBlur}
             className="block w-full py-2 pr-3 pl-11 placeholder-neutral-600 text-white focus:border-2 border-primary outline-none rounded-lg bg-neutral-950"
             placeholder="Search profile, NIP-05 or npub1..."
             required/>
         </div>
+        {modal && <div ref={searchRef} className="absolute w-full bg-surface-06dp border border-neutral-700 rounded-md shadow-md mt-4 py-1">
+          {!people.length && <div className="text-sm text-white text-center py-4">
+            No results found, try something else.
+          </div>}
+          {people.map((person, index) => 
+            <div key={`person-${index}`} className="hover:bg-surface-24dp cursor-pointer flex justify-between items-center text-white" onClick={() => {addPerson(person); setModal(false);}}>
+              <div className="flex items-center px-4 py-2">
+                <img className="bg-white rounded-full h-8 w-8" src={person.picture}></img>
+                <div className="ml-3 text-sm">     
+                  <h3 className="font-bold">{person.name}</h3>
+                  <p className="font-medium">{person.lud16}</p>
+                </div>
+              </div>
+            </div>
+          )}
+        </div>}
       </form>
     </>
   );

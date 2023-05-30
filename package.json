@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "axios": "^1.4.0",
+    "lodash": "^4.17.21",
     "nostr-hooks": "^1.8.0",
     "nostr-tools": "^1.11.1",
     "react": "^18.2.0",
