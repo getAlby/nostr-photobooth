@@ -1,9 +1,10 @@
 import axios from 'axios';
-import { usePublish } from 'nostr-hooks';
+import { usePubkey, usePublish } from 'nostr-hooks';
 import { nip19 } from 'nostr-tools';
 import { useCallback, useRef, useState } from 'react';
 import Webcam from 'react-webcam';
-import { createSplitAddress } from "./utils/createSplitAddress";
+
+import { createSplitAddress } from './utils/createSplitAddress';
 
 const RELAYS = ['wss://relay.damus.io'];
 
@@ -22,13 +23,19 @@ const dataURLtoFile = (dataurl, filename) => {
   return new File([u8arr], filename, { type: mime });
 };
 
-import Camera from "./assets/camera.svg"
+import Camera from './assets/camera.svg';
 
 const CustomWebcam = (persons) => {
   const webcamRef = useRef(null);
   const [imgSrc, setImgSrc] = useState(null);
-  const [badgeName, setBadgeName] = useState("alby_btc_prague");
-  const [text, setText] = useState("We visited Alby at @npub167n5w6cj2wseqtmk26zllc7n28uv9c4vw28k2kht206vnghe5a7stgzu3r 🥳 ");
+  const [badgeName, setBadgeName] = useState('alby_btc_prague');
+  const [text, setText] = useState(
+    'We visited Alby at @npub167n5w6cj2wseqtmk26zllc7n28uv9c4vw28k2kht206vnghe5a7stgzu3r 🥳 '
+  );
+
+  const ourPubkey = usePubkey();
+  const publish = usePublish(RELAYS);
+
   const handleTextChange = (event) => {
     setText(event.target.value);
   };
@@ -36,12 +43,9 @@ const CustomWebcam = (persons) => {
     setBadgeName(event.target.value);
   };
 
-  const publish = usePublish(RELAYS);
-
-
   const capture = useCallback(async () => {
     if (!persons.persons.length) {
-      alert("Please tag some users");
+      alert('Please tag some users');
       return;
     }
     const imageSrc = webcamRef.current.getScreenshot();
@@ -61,17 +65,15 @@ const CustomWebcam = (persons) => {
     let tags = [];
     const splitAddresses = [];
     let content = text;
-    const ourPubkey = await window.nostr.getPublicKey()
-    let badgeTags = [['a', '30009:'+ ourPubkey + ':' + badgeName]];
+    let badgeTags = [['a', '30009:' + ourPubkey + ':' + badgeName]];
     for (let i = 0; i < persons.persons.length; i++) {
       let person = persons.persons[i];
       let npub = nip19.npubEncode(person.pubkey);
       tags.push(['p', person.pubkey]);
       if (person.lud16) {
         splitAddresses.push(person.lud16);
-      }
-      else {
-        console.warn(person.pubkey + " does not have a lightning address")
+      } else {
+        console.warn(person.pubkey + ' does not have a lightning address');
       }
       badgeTags.push(['p', person.pubkey]);
       content = content + npub + ' ';
@@ -86,31 +88,40 @@ const CustomWebcam = (persons) => {
       .then(async (response) => {
         const data = response.data.toString();
         const uploadedUrl = data.match('https://nostr.build/i/[^<]*')[0];
-        await publish({ content: content + uploadedUrl, tags: tags, kind: 1 });
+        await publish({ content: content + uploadedUrl, tags, kind: 1 });
         //publish badge event
-        await publish({tags: badgeTags, kind: 8})
+        await publish({ tags: badgeTags, kind: 8 });
       });
   }, [webcamRef, publish, persons.persons]);
 
   return (
     <>
       {imgSrc ? (
-        <img src={imgSrc} className="w-full" style={{border: "24px solid #FFDE6E", borderRadius: "56px"}} alt="webcam" />
+        <img
+          src={imgSrc}
+          className="w-full"
+          style={{ border: '24px solid #FFDE6E', borderRadius: '56px' }}
+          alt="webcam"
+        />
       ) : (
-        <Webcam className="w-full" style={{border: "24px solid #FFDE6E", borderRadius: "56px"}} ref={webcamRef} />
+        <Webcam
+          className="w-full"
+          style={{ border: '24px solid #FFDE6E', borderRadius: '56px' }}
+          ref={webcamRef}
+        />
       )}
-      <label >
-        Badge name
-      </label>
-      <input value={badgeName} onChange={handleBadgeNameChange}
-      style={{
+      <label>Badge name</label>
+      <input
+        value={badgeName}
+        onChange={handleBadgeNameChange}
+        style={{
           padding: '10px',
           borderRadius: '5px',
           background: '#ccc',
           margin: '10px',
-        }}>
-      </input>
-       <textarea
+        }}
+      ></input>
+      <textarea
         value={text}
         onChange={handleTextChange}
         rows={4} // Number of visible rows
@@ -123,8 +134,11 @@ const CustomWebcam = (persons) => {
         }}
       />
       <div className="flex justify-center">
-        <button onClick={capture} className="bg-primary-gradient hover:bg-primary-gradient-hover my-12 px-48 py-3.5 rounded-xl">
-          <img src={Camera} className="mx-auto h-9 w-9"/>
+        <button
+          onClick={capture}
+          className="bg-primary-gradient hover:bg-primary-gradient-hover my-12 px-48 py-3.5 rounded-xl"
+        >
+          <img src={Camera} className="mx-auto h-9 w-9" />
         </button>
       </div>
     </>
