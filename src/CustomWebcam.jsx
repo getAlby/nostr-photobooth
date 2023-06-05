@@ -27,6 +27,10 @@ import Camera from "./assets/camera.svg"
 const CustomWebcam = (persons) => {
   const webcamRef = useRef(null);
   const [imgSrc, setImgSrc] = useState(null);
+  const [text, setText] = useState("We visited Alby at @npub167n5w6cj2wseqtmk26zllc7n28uv9c4vw28k2kht206vnghe5a7stgzu3r 🥳 ");
+  const handleChange = (event) => {
+    setText(event.target.value);
+  };
 
   const publish = usePublish(RELAYS);
 
@@ -51,9 +55,10 @@ const CustomWebcam = (persons) => {
       },
     };
     let tags = [];
-    let content = 'Hi from us: ';
-
     const splitAddresses = [];
+    let content = text;
+    //todo: set this badge tag dynamically from secondary page
+    let badgeTags = [['a', '30009:3e304f254c644dd72e0a22ab6cf02e20dbdecda4d2f000a13599bd6a2c9061c3:alby_btc_prague_test']];
     for (let i = 0; i < persons.persons.length; i++) {
       let person = persons.persons[i];
       let npub = nip19.npubEncode(person.pubkey);
@@ -64,6 +69,8 @@ const CustomWebcam = (persons) => {
       else {
         console.warn(person.pubkey + " does not have a lightning address")
       }
+      badgeTags.push(['p', person.pubkey]);
+      tags.push(['zap', person.lud16, 'lud16']);
       content = content + '@' + npub + ' ';
     }
     const splitAddress = await createSplitAddress(splitAddresses);
@@ -77,6 +84,8 @@ const CustomWebcam = (persons) => {
         const data = response.data.toString();
         const uploadedUrl = data.match('https://nostr.build/i/[^<]*')[0];
         await publish({ content: content + uploadedUrl, tags: tags, kind: 1 });
+        //publish badge event
+        await publish({tags: badgeTags, kind: 8})
       });
   }, [webcamRef, publish, persons.persons]);
 
@@ -87,6 +96,18 @@ const CustomWebcam = (persons) => {
       ) : (
         <Webcam className="w-full" style={{border: "24px solid #FFDE6E", borderRadius: "56px"}} ref={webcamRef} />
       )}
+       <textarea
+        value={text}
+        onChange={handleChange}
+        rows={4} // Number of visible rows
+        cols={40} // Number of visible columns
+        style={{
+          padding: '10px',
+          borderRadius: '5px',
+          background: '#ccc',
+          margin: '10px',
+        }}
+      />
       <div className="flex justify-center">
         <button onClick={capture} className="bg-primary-gradient hover:bg-primary-gradient-hover my-12 px-48 py-3.5 rounded-xl">
           <img src={Camera} className="mx-auto h-9 w-9"/>
