@@ -61,7 +61,7 @@ const CustomWebcam = (persons) => {
     let tags = [];
     const splitAddresses = [];
     let content = text;
-    const ourPubkey = window.nostr.getPublicKey()
+    const ourPubkey = await window.nostr.getPublicKey()
     let badgeTags = [['a', '30009:'+ ourPubkey + ':' + badgeName]];
     for (let i = 0; i < persons.persons.length; i++) {
       let person = persons.persons[i];
