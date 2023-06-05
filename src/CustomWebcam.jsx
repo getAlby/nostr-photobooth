@@ -27,12 +27,18 @@ import Camera from "./assets/camera.svg"
 const CustomWebcam = (persons) => {
   const webcamRef = useRef(null);
   const [imgSrc, setImgSrc] = useState(null);
+  const [badgeName, setBadgeName] = useState("alby_btc_prague");
   const [text, setText] = useState("We visited Alby at @npub167n5w6cj2wseqtmk26zllc7n28uv9c4vw28k2kht206vnghe5a7stgzu3r 🥳 ");
-  const handleChange = (event) => {
+  const handleTextChange = (event) => {
     setText(event.target.value);
+  };
+  const handleBadgeNameChange = (event) => {
+    setBadgeName(event.target.value);
   };
 
   const publish = usePublish(RELAYS);
+
+  const ourPubkey = window.nostr.getPublicKey()
 
   const capture = useCallback(async () => {
     if (!persons.persons.length) {
@@ -57,8 +63,7 @@ const CustomWebcam = (persons) => {
     let tags = [];
     const splitAddresses = [];
     let content = text;
-    //todo: set this badge tag dynamically from secondary page
-    let badgeTags = [['a', '30009:3e304f254c644dd72e0a22ab6cf02e20dbdecda4d2f000a13599bd6a2c9061c3:alby_btc_prague_test']];
+    let badgeTags = [['a', '30009:'+ ourPubkey + ':' + badgeName]];
     for (let i = 0; i < persons.persons.length; i++) {
       let person = persons.persons[i];
       let npub = nip19.npubEncode(person.pubkey);
@@ -96,9 +101,20 @@ const CustomWebcam = (persons) => {
       ) : (
         <Webcam className="w-full" style={{border: "24px solid #FFDE6E", borderRadius: "56px"}} ref={webcamRef} />
       )}
+      <label >
+        Badge name
+      </label>
+      <input value={badgeName} onChange={handleBadgeNameChange}
+      style={{
+          padding: '10px',
+          borderRadius: '5px',
+          background: '#ccc',
+          margin: '10px',
+        }}>
+      </input>
        <textarea
         value={text}
-        onChange={handleChange}
+        onChange={handleTextChange}
         rows={4} // Number of visible rows
         cols={40} // Number of visible columns
         style={{
