@@ -38,14 +38,12 @@ const CustomWebcam = (persons) => {
 
   const publish = usePublish(RELAYS);
 
-  const ourPubkey = window.nostr.getPublicKey()
 
   const capture = useCallback(async () => {
     if (!persons.persons.length) {
       alert("Please tag some users");
       return;
     }
-
     const imageSrc = webcamRef.current.getScreenshot();
     setImgSrc(imageSrc);
     // generate file from base64 string
@@ -63,6 +61,7 @@ const CustomWebcam = (persons) => {
     let tags = [];
     const splitAddresses = [];
     let content = text;
+    const ourPubkey = window.nostr.getPublicKey()
     let badgeTags = [['a', '30009:'+ ourPubkey + ':' + badgeName]];
     for (let i = 0; i < persons.persons.length; i++) {
       let person = persons.persons[i];
@@ -75,8 +74,7 @@ const CustomWebcam = (persons) => {
         console.warn(person.pubkey + " does not have a lightning address")
       }
       badgeTags.push(['p', person.pubkey]);
-      tags.push(['zap', person.lud16, 'lud16']);
-      content = content + '@' + npub + ' ';
+      content = content + npub + ' ';
     }
     const splitAddress = await createSplitAddress(splitAddresses);
     tags.push(['zap', splitAddress, 'lud16']);
