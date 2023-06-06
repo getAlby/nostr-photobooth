@@ -100,17 +100,12 @@ const CustomWebcam = (props) => {
           ref={webcamRef}
         />
       )}
-
-      
-
-      <div className="flex justify-center">
         <button
           onClick={capture}
           className="bg-primary-gradient hover:bg-primary-gradient-hover my-12 px-48 py-3.5 rounded-xl"
         >
           <img src={Camera} className="mx-auto h-9 w-9" />
         </button>
-      </div>
     </>
   );
 };
