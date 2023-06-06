@@ -100,39 +100,55 @@ const CustomWebcam = (persons) => {
         <img
           src={imgSrc}
           className="w-full"
-          style={{ border: '24px solid #FFDE6E', borderRadius: '56px' }}
+          style={{ border: '20px solid #FFDE6E', borderRadius: '56px' }}
           alt="webcam"
         />
       ) : (
         <Webcam
           className="w-full"
-          style={{ border: '24px solid #FFDE6E', borderRadius: '56px' }}
+          style={{ border: '20px solid #FFDE6E', borderRadius: '56px' }}
           ref={webcamRef}
         />
       )}
-      <label>Badge name</label>
-      <input
-        value={badgeName}
-        onChange={handleBadgeNameChange}
-        style={{
-          padding: '10px',
-          borderRadius: '5px',
-          background: '#ccc',
-          margin: '10px',
-        }}
-      ></input>
-      <textarea
-        value={text}
-        onChange={handleTextChange}
-        rows={4} // Number of visible rows
-        cols={40} // Number of visible columns
-        style={{
-          padding: '10px',
-          borderRadius: '5px',
-          background: '#ccc',
-          margin: '10px',
-        }}
-      />
+
+      <div>
+        <div className="mt-4">
+          <label className="text-primary w-full" htmlFor="badge-name">
+            Badge name:
+          </label>
+          <input
+            id="badge-name"
+            value={badgeName}
+            onChange={handleBadgeNameChange}
+            className="w-full rounded-md"
+            style={{
+              padding: '10px',
+              marginTop: '8px',
+              background: '#ccc',
+            }}
+          />
+        </div>
+
+        <div className="mt-4">
+          <label className="text-primary" htmlFor="description">
+            Description:
+          </label>
+          <textarea
+            id="description"
+            value={text}
+            onChange={handleTextChange}
+            rows={4} // Number of visible rows
+            cols={40} // Number of visible columns
+            className="w-full rounded-md"
+            style={{
+              padding: '10px',
+              marginTop: '8px',
+              background: '#ccc',
+            }}
+          />
+        </div>
+      </div>
+
       <div className="flex justify-center">
         <button
           onClick={capture}
