@@ -18,7 +18,7 @@ function App() {
   }, []);
 
   const removePersonByIndex = useCallback(
-    (index) => () => {
+    (index) => {
       setPersons((persons) => [
         ...persons.slice(0, index),
         ...persons.slice(index + 1),
