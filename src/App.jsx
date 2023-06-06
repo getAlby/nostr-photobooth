@@ -8,6 +8,10 @@ import CrossIcon from './assets/cross.jsx';
 
 function App() {
   const [persons, setPersons] = useState([]);
+  const [badgeName, setBadgeName] = useState('alby_btc_prague');
+  const [text, setText] = useState(
+    'We visited Alby at @npub167n5w6cj2wseqtmk26zllc7n28uv9c4vw28k2kht206vnghe5a7stgzu3r 🥳 '
+  );
 
   const addPerson = useCallback((person) => {
     setPersons((persons) => [...persons, person]);
@@ -30,14 +34,13 @@ function App() {
       <nav className="text-xl mx-auto text-center text-primary p-4">
         <span className="text-purple-500 font-bold">Nostr</span> Photo Booth
       </nav>
-
-      <div className="container mx-auto px-5 lg:px-36">
-        <div>
+      <div className="grid xl:grid-cols-2 mb-48">
+        <div className="mx-4">
           <h2 className="text-4xl font-bold text-primary mb-6">
             Tag your Nostr profiles
           </h2>
 
-          <SearchBox addPerson={addPerson} />
+          <SearchBox addPerson={addPerson} setBadgeName={setBadgeName} setText={setText} badgeName={badgeName} text={text}/>
 
           <ul className="mt-4">
             {persons.map((person, index) => (
@@ -64,37 +67,7 @@ function App() {
             ))}
           </ul>
         </div>
-
-        <CustomWebcam persons={persons} />
-
-        <div className="grid xl:grid-cols-2 mb-48">
-          <div>
-            <h2 className="text-4xl font-bold text-primary mb-6">
-              How it works?
-            </h2>
-
-            <ol className="list-inside list-decimal text-white">
-              <li className="my-2">
-                Every photo will be published on{' '}
-                <span className="text-primary underline">
-                  Alby Nostr profile
-                </span>
-              </li>
-
-              <li className="my-2">
-                Nostr profiles can be tagged to the photo
-              </li>
-
-              <li className="my-2">
-                All zapps will be split between people tagged
-              </li>
-
-              <li className="my-2">
-                Everyone tagged will receive a unique badge!
-              </li>
-            </ol>
-          </div>
-        </div>
+        <CustomWebcam persons={persons} badgeName={badgeName} text={text}/>
       </div>
     </>
   );

@@ -25,26 +25,16 @@ const dataURLtoFile = (dataurl, filename) => {
 
 import Camera from './assets/camera.svg';
 
-const CustomWebcam = (persons) => {
+const CustomWebcam = (props) => {
   const webcamRef = useRef(null);
   const [imgSrc, setImgSrc] = useState(null);
-  const [badgeName, setBadgeName] = useState('alby_btc_prague');
-  const [text, setText] = useState(
-    'We visited Alby at @npub167n5w6cj2wseqtmk26zllc7n28uv9c4vw28k2kht206vnghe5a7stgzu3r 🥳 '
-  );
+  
 
   const ourPubkey = usePubkey();
   const publish = usePublish(RELAYS);
 
-  const handleTextChange = (event) => {
-    setText(event.target.value);
-  };
-  const handleBadgeNameChange = (event) => {
-    setBadgeName(event.target.value);
-  };
-
-  const capture = useCallback(async () => {
-    if (!persons.persons.length) {
+   const capture = useCallback(async () => {
+    if (!props.persons.length) {
       alert('Please tag some users');
       return;
     }
@@ -64,10 +54,10 @@ const CustomWebcam = (persons) => {
     };
     let tags = [];
     const splitAddresses = [];
-    let content = text;
-    let badgeTags = [['a', '30009:' + ourPubkey + ':' + badgeName]];
-    for (let i = 0; i < persons.persons.length; i++) {
-      let person = persons.persons[i];
+    let content = props.text;
+    let badgeTags = [['a', '30009:' + ourPubkey + ':' + props.badgeName]];
+    for (let i = 0; i < props.persons.length; i++) {
+      let person = props.persons[i];
       let npub = nip19.npubEncode(person.pubkey);
       tags.push(['p', person.pubkey]);
       if (person.lud16) {
@@ -92,7 +82,7 @@ const CustomWebcam = (persons) => {
         //publish badge event
         await publish({ tags: badgeTags, kind: 8 });
       });
-  }, [webcamRef, publish, persons.persons]);
+  }, [webcamRef, publish, props.persons]);
 
   return (
     <>
@@ -111,43 +101,7 @@ const CustomWebcam = (persons) => {
         />
       )}
 
-      <div>
-        <div className="mt-4">
-          <label className="text-primary w-full" htmlFor="badge-name">
-            Badge name:
-          </label>
-          <input
-            id="badge-name"
-            value={badgeName}
-            onChange={handleBadgeNameChange}
-            className="w-full rounded-md"
-            style={{
-              padding: '10px',
-              marginTop: '8px',
-              background: '#ccc',
-            }}
-          />
-        </div>
-
-        <div className="mt-4">
-          <label className="text-primary" htmlFor="description">
-            Description:
-          </label>
-          <textarea
-            id="description"
-            value={text}
-            onChange={handleTextChange}
-            rows={4} // Number of visible rows
-            cols={40} // Number of visible columns
-            className="w-full rounded-md"
-            style={{
-              padding: '10px',
-              marginTop: '8px',
-              background: '#ccc',
-            }}
-          />
-        </div>
-      </div>
+      
 
       <div className="flex justify-center">
         <button

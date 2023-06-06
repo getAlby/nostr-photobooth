@@ -4,13 +4,13 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 
 import Search from './assets/search.jsx';
 
-const SearchBox = ({ addPerson }) => {
+const SearchBox = ({ addPerson, text, setText, badgeName, setBadgeName }) => {
   const [modal, setModal] = useState(false);
   const [people, setPeople] = useState([]);
   const [loading, setLoading] = useState(false);
   const [isFocused, setIsFocused] = useState(false);
   const searchRef = useRef(null);
-
+  
   const search = useCallback(async (query) => {
     if (!query) return;
 
@@ -40,6 +40,15 @@ const SearchBox = ({ addPerson }) => {
     setIsFocused(false);
     setLoading(false);
   }, []);
+
+  const handleTextChange = (event) => {
+    setText(event.target.value);
+  };
+
+  const handleBadgeNameChange = (event) => {
+    setBadgeName(event.target.value);
+  };
+
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -130,6 +139,43 @@ const SearchBox = ({ addPerson }) => {
           </div>
         )}
       </form>
+      <div>
+        <div className="mt-4">
+          <label className="text-primary w-full" htmlFor="badge-name">
+            Badge name:
+          </label>
+          <input
+            id="badge-name"
+            value={badgeName}
+            onChange={handleBadgeNameChange}
+            className="w-full rounded-md"
+            style={{
+              padding: '10px',
+              marginTop: '8px',
+              background: '#ccc',
+            }}
+          />
+        </div>
+
+        <div className="mt-4">
+          <label className="text-primary" htmlFor="description">
+            Description:
+          </label>
+          <textarea
+            id="description"
+            value={text}
+            onChange={handleTextChange}
+            rows={4} // Number of visible rows
+            cols={40} // Number of visible columns
+            className="w-full rounded-md"
+            style={{
+              padding: '10px',
+              marginTop: '8px',
+              background: '#ccc',
+            }}
+          />
+        </div>
+      </div>
     </>
   );
 };
