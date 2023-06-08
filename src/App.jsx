@@ -10,7 +10,7 @@ function App() {
   const [persons, setPersons] = useState([]);
   const [badgeName, setBadgeName] = useState('alby_btc_prague');
   const [text, setText] = useState(
-    'We visited Alby at @npub167n5w6cj2wseqtmk26zllc7n28uv9c4vw28k2kht206vnghe5a7stgzu3r 🥳 '
+    'We visited Alby at BTC Prague 🥳 '
   );
 
   const addPerson = useCallback((person) => {

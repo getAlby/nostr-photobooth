@@ -66,13 +66,11 @@ const CustomWebcam = (props) => {
         console.warn(person.pubkey + ' does not have a lightning address');
       }
       badgeTags.push(['p', person.pubkey]);
-      content = content + npub + ' ';
+      content = content + `#[`+ i+ `]` + ' ';
     }
     const splitAddress = await createSplitAddress(splitAddresses);
     tags.push(['zap', splitAddress, 'lud16']);
 
-    console.log(tags);
-    console.log(content);
     axios
       .post('https://nostr.build/upload.php', data, config)
       .then(async (response) => {
