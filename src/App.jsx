@@ -10,7 +10,7 @@ function App() {
   const [persons, setPersons] = useState([]);
   const [badgeName, setBadgeName] = useState('alby_btc_prague');
   const [text, setText] = useState(
-    'We visited Alby at #btcprague 🥳 '
+    'We visited Alby at #btcprague 🥳 If you zap this post, everyone in it gets a split ⚡ '
   );
 
   const addPerson = useCallback((person) => {
